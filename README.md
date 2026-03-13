@@ -1,261 +1,89 @@
 # Binance Trading Tools
 
-Herramientas en Python para análisis de mercado y posiciones en Binance Spot, 
-orientadas a una operativa simple de compra límite, 
-gestión con OCO y comparación de múltiples pares.
+Herramienta de análisis técnico para pares de Binance orientada a dos flujos de trabajo:
+
+- **Modo mercado**: revisar varios pares y generar un watchlist priorizado.
+- **Modo posición**: analizar un solo activo ya comprado para revisar contexto, soportes, resistencias e invalidaciones de referencia.
+
+El objetivo del script es servir como **herramienta de screening y apoyo de decisión**, no como sistema automático de ejecución.
 
 ## Autor
-**David Ramirez Chiappe**
+**David Ramirez Chiappe** 
 
 ## Licencia
 Este proyecto es de **uso libre y gratuito**, y se distribuye bajo la **MIT License**.
 
-Esto significa que cualquier persona puede usarlo, copiarlo, modificarlo, publicarlo, 
-distribuirlo e incluso utilizarlo comercialmente, siempre que conserve el aviso de 
+Esto significa que cualquier persona puede usarlo, copiarlo, modificarlo, publicarlo,
+distribuirlo e incluso utilizarlo comercialmente, siempre que conserve el aviso de
 copyright y la licencia original.
 
 Consulta el archivo [`LICENSE`](./LICENSE) para el texto completo.
 
 ## Descargo de responsabilidad
-Este software se proporciona **“tal cual”**, sin garantías de ningún tipo.  
-Su uso es responsabilidad exclusiva del usuario. No constituye asesoría financiera, legal ni profesional.
-
-# Trading Tools
-
-Este documento resume los scripts creados para analizar mercado y posiciones en Binance Spot, con foco en una operativa simple de:
-
-* elegir moneda
-* definir compra límite
-* gestionar posiciones con OCO
-* comparar varias monedas cuando estoy en USDT
+Este software se proporciona **“tal cual”**, sin garantías de ningún tipo.
+Su uso es responsabilidad exclusiva del usuario. No constituye asesoría financiera,
+legal ni profesional.
 
 ## Objetivo general
 
-La idea de estos scripts es reemplazar parte del análisis visual por un análisis más riguroso, usando datos exactos de Binance:
+La idea de estos scripts es reemplazar parte del análisis visual por un análisis más
+riguroso, usando datos exactos de Binance:
 
 * velas `15m`, `1h`, `4h`
 * precio actual
 * medias simples
+* ATR / volatilidad
 * profundidad corta del libro
 * balances, trades y órdenes abiertas
 * OCO activas
 
-Así, el análisis posterior en ChatGPT se hace sobre datos estructurados y no solo sobre capturas.
+Así, el análisis posterior en ChatGPT se hace sobre datos estructurados y no solo
+sobre capturas.
 
 ---
-
-# 1. `binance_snapshot.py`
-
-## Utilidad
-
-Primera versión básica para descargar información pública de un par y guardarla en archivos.
 
 ## Qué hace
 
-* descarga datos públicos de Binance
-* obtiene velas de:
-
-  * `15m`
-  * `1h`
-  * `4h`
-* genera:
-
-  * `summary.json`
-  * `analysis_summary.txt`
-  * `klines_15m.csv`
-  * `klines_1h.csv`
-  * `klines_4h.csv`
-
-## Para qué sirve
-
-* tener una primera fotografía del mercado
-* reemplazar capturas por datos numéricos
-* revisar estructura general de una moneda
-
-## Limitaciones
-
-* no estaba orientado todavía a posiciones reales
-* no estaba pensado aún para OCO o watchlist de varias monedas
-* no manejaba bien datos privados ni contexto completo de la posición
+- Descarga velas OHLCV desde Binance.
+- Calcula métricas por timeframe (`15m`, `1h`, `4h`).
+- Evalúa estructura con medias móviles (`MA7`, `MA25`, `MA99`).
+- Calcula volatilidad con `ATR14`.
+- Detecta soportes y resistencias de referencia.
+- Genera entradas sugeridas por escalones:
+  - `aggressive`
+  - `base`
+  - `conservative`
+- Estima contexto operativo:
+  - `setup_status`
+  - `trend_quality`
+  - `context_bias`
+  - `extension_risk`
+  - `pullback_quality`
+  - `support_quality`
+  - `zone_integrity`
+- Genera salidas en:
+  - `watchlist_summary.json`
+  - `watchlist_summary.txt`
+  - `<SIMBOLO>_summary.json`
 
 ---
 
-# 2. `binance_snapshot_v2.py`
+## Qué no hace
 
-## Utilidad
-
-Segunda versión orientada a enriquecer el snapshot con datos privados y contexto de posición.
-
-## Qué mejora respecto a la v1
-
-* añade posibilidad de usar datos privados con API key
-* obtiene:
-
-  * balances
-  * trades recientes
-  * órdenes abiertas
-  * OCO abiertas
-* añade reglas del par:
-
-  * `tickSize`
-  * `stepSize`
-  * `minNotional`
-  * etc.
-
-## Para qué sirve
-
-* revisar una posición abierta con más contexto
-* contrastar entrada manual con trades recientes
-* ver si la OCO existe y está bien detectada
-
-## Limitaciones
-
-* interfaz menos amigable
-* argumentos más “técnicos”
-* todavía no separaba bien el caso de:
-
-  * analizar una posición
-  * analizar varias monedas para decidir una entrada nueva
+- No ejecuta órdenes en Binance.
+- No reemplaza validación humana.
+- No garantiza take profit, stop loss u OCO correctos por sí solos.
+- No debe interpretarse como asesoría financiera.
 
 ---
 
-# 3. `binance_trading_v3.py`
+## Requisitos
 
-## Utilidad
-
-Primera versión unificada y ya orientada a dos modos de trabajo reales:
-
-* `posicion`
-* `mercado`
-
-## Idea central
-
-En vez de tener dos scripts totalmente separados, se creó un solo script con dos modos:
-
-### Modo `posicion`
-
-Para cuando ya compré una moneda y quiero analizarla para:
-
-* gestionar el trade
-* revisar la OCO
-* evaluar la estructura actual
-
-### Modo `mercado`
-
-Para cuando estoy en USDT y quiero comparar varias monedas para decidir:
-
-* cuál tiene mejor estructura
-* cuál tiene mejor retroceso
-* dónde podría poner una compra límite
-
-## Características
-
-* nombres de argumentos más amigables
-* opción de usar:
-
-  * `--privados`
-  * `--precio`
-  * `--inversion`
-* `--trades-limit` con default más amplio
-* dos subcomandos:
-
-  * `posicion`
-  * `mercado`
-
-## Limitaciones
-
-* el ranking de `mercado` aún tenía sesgos
-* sobrevaloraba algunos activos flojos, como POL en ciertos escenarios
-* el modo `posicion` todavía necesitaba mejorar el resumen operativo y la lectura de OCO
+- Python 3.10 o superior
+- Dependencias instaladas del proyecto
+- Archivo de claves API de Binance con permisos de lectura de mercado
 
 ---
-
-# 4. `binance_trading_v3_1.py`
-
-## Utilidad
-
-Versión centrada en mejorar el modo `mercado`.
-
-## Qué mejora
-
-* corrige la heurística del ranking
-* penaliza más la debilidad real en `4h`, sobre todo frente a `MA99`
-* mejora la lógica de spread y liquidez relativa
-* mejora la elección de compra límite para que no quede demasiado pegada al precio actual
-
-## Resultado esperado
-
-El ranking de monedas queda más razonable cuando comparo varias opciones, por ejemplo:
-
-* ETH
-* SOL
-* ADA
-* XRP
-* POL
-
-## Para qué sirve
-
-* priorizar qué moneda analizar o comprar
-* definir una compra límite mecánica razonable
-* evitar entrar por intuición o por sesgo de recencia
-
-## Limitaciones
-
-* el modo `posicion` todavía no mostraba todo lo deseable sobre cobertura real de OCO y riesgo operativo
-
----
-
-# 5. `binance_trading_v3_2.py`
-
-## Utilidad
-
-Versión enfocada en dejar el modo `posicion` realmente útil y legible.
-
-Esta es la versión más completa y la que se decidió usar como base.
-
-## Qué mejora respecto a la v3.1
-
-### En modo `posicion`
-
-* mejora el formateo numérico
-* reconstruye mejor la OCO
-* muestra cobertura real de la posición:
-
-  * `qty_total`
-  * `qty_cubierta_por_oco`
-  * `qty_libre_fuera_oco`
-  * `pct_cubierto_por_oco`
-* añade resumen operativo:
-
-  * `tp_price`
-  * `sl_trigger`
-  * `sl_limit`
-  * distancia porcentual al TP
-  * distancia porcentual al SL
-  * `rr_bruto`
-* añade alertas:
-
-  * posición sin OCO
-  * OCO cubriendo menos del 90%
-  * múltiples OCO
-  * residuos fuera de OCO
-  * órdenes adicionales fuera de OCO
-  * diferencias entre precio manual y estimado
-
-### En modo `mercado`
-
-Mantiene la lógica mejorada de la v3.1:
-
-* ranking más robusto
-* soporte principal y segundo soporte
-* mejor priorización entre varias monedas
-
-## Estado actual
-
-Es la versión más madura del proyecto.
-
----
-
 # Archivo `.env`
 
 ## Para qué sirve
@@ -322,6 +150,37 @@ Datos crudos de velas. Sirven para:
 
 Resumen comparativo de varias monedas.
 
+## Campos más útiles en versiones recientes
+
+En `v3_5` y `v3_6` aparecen, según el modo:
+
+* `setup_status`
+* `trend_quality`
+* `context_bias`
+* `support_zone`
+* `entries`:
+
+  * `aggressive`
+  * `base`
+  * `conservative`
+* `entries_quality`
+* `zone_integrity`
+* `trend_score`
+* `tradeability_score`
+* `score_bucket`
+* `extension_risk`
+* `pullback_quality`
+* `support_quality`
+* `why_ranked_here`
+* `nearest_resistance_micro`
+* `nearest_resistance_operativa`
+* `rr_operativa_preliminar`
+* `rr_estructural_preliminar`
+* `stop_candidate_operativo`
+* `stop_candidate_estructural`
+* `atr14`
+* `candidates_debug`
+
 ---
 
 # Cuándo usar cada modo
@@ -345,32 +204,32 @@ Cuando:
 
 ---
 
-# Ejemplos de uso de `binance_trading_v3_2.py`
+# Ejemplos de uso de `binance_trading_v3_6.py`
 
 ## A. Analizar una sola moneda ya comprada (`posicion`)
 
 ### Con datos privados y entrada manual
 
 ```bash
-python binance_trading_v3_2.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3
+python binance_trading_v3_6.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3
 ```
 
 ### Con archivo `.env` en otra ruta
 
 ```bash
-python binance_trading_v3_2.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3 --archivo-env C:\mis_claves\binance.env
+python binance_trading_v3_6.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3 --archivo-env C:\mis_claves\binance.env
 ```
 
 ### Sin datos privados, solo con entrada manual
 
 ```bash
-python binance_trading_v3_2.py posicion --par ETHUSDT --precio 2028 --inversion 31.75
+python binance_trading_v3_6.py posicion --par ETHUSDT --precio 2028 --inversion 31.75
 ```
 
 ### Con más velas
 
 ```bash
-python binance_trading_v3_2.py posicion --par ETHUSDT --privados --precio 2028 --inversion 31.75 --velas 200
+python binance_trading_v3_6.py posicion --par ETHUSDT --privados --precio 2028 --inversion 31.75 --velas 200
 ```
 
 ---
@@ -380,66 +239,26 @@ python binance_trading_v3_2.py posicion --par ETHUSDT --privados --precio 2028 -
 ### Watchlist básica
 
 ```bash
-python binance_trading_v3_2.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
+python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
 ```
 
 ### Watchlist con capital de referencia personalizado
 
 ```bash
-python binance_trading_v3_2.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2
+python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2
 ```
 
 ### Watchlist con más velas
 
 ```bash
-python binance_trading_v3_2.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2 --velas 200
+python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2 --velas 200
 ```
 
----
+### Watchlist con todos los pares que quieras analizar
 
-# Flujo de trabajo recomendado
-
-## Caso 1: estoy en USDT
-
-1. Ejecutar modo `mercado`
-2. Revisar:
-
-   * ranking
-   * compra límite sugerida
-   * segundo soporte
-3. elegir la moneda candidata
-4. colocar la orden límite
-5. esperar cierre de `4h` antes de reanalizar, salvo cambio estructural
-
-## Caso 2: ya compré una moneda
-
-1. Ejecutar modo `posicion`
-2. revisar:
-
-   * posición real
-   * OCO
-   * cobertura
-   * riesgo operativo
-   * alertas
-3. decidir si:
-
-   * mantener OCO
-   * ajustar OCO
-   * o salir del trade
-
----
-
-# Regla operativa general adoptada
-
-Cuando la decisión se tomó con base en `1h + 4h`:
-
-* **no revisar cada hora por ansiedad**
-* **revisar normalmente al cierre de una nueva vela de 4h**
-* revisar antes solo si:
-
-  * el precio está muy cerca de la orden
-  * la estructura se rompe
-  * el precio se aleja tanto que la orden queda desfasada
+```bash
+python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT ROBOUSDT
+```
 
 ---
 
@@ -465,41 +284,42 @@ Aunque muchas veces basta con `summary.json` y `analysis_summary.txt`, los CSV s
 * sirven para auditoría
 * ayudan si luego se quiere hacer backtesting o mejoras del sistema
 
----
+## Sobre el ranking
 
-# Recomendación final
+El ranking es una ayuda de priorización, no una garantía de compra.
 
-La versión recomendada para seguir usando es:
+Sirve para comparar candidatos, pero la decisión final debe revisar también:
 
-**`binance_trading_v3_2.py`**
-
-porque:
-
-* ya resuelve bien el modo `mercado`
-* ya resuelve bien el modo `posicion`
-* usa `.env`
-* genera salidas legibles
-* permite análisis más rigurosos y consistentes
+* estructura `4h`
+* calidad del pullback `1h`
+* contexto del `15m`
+* cercanía real al soporte
+* invalidación técnica
+* calidad de la zona
+* operabilidad real del setup
 
 ---
 
-# Resumen corto
+## Buenas prácticas de uso
 
-## Script recomendado actual
-
-**`binance_trading_v3_2.py`**
-
-## Modos principales
-
-* `posicion`: una moneda ya comprada
-* `mercado`: varias monedas para elegir compra
-
-## Archivo auxiliar recomendado
-
-* `.env` con:
-
-  * `BINANCE_API_KEY`
-  * `BINANCE_API_SECRET`
+- Analiza siempre con datos recientes.
+- Usa el watchlist como filtro, no como piloto automático.
+- Contrasta el activo elegido con su resumen individual.
+- No tomes `score`, `rr_operativa_preliminar` o invalidaciones como órdenes listas para ejecutar sin revisión humana.
+- En compras límite, revisa luego el contexto actualizado antes de definir OCO.
 
 ---
 
+## Estructura recomendada del proyecto
+
+```bash
+project/
+├── binance_trading_v3_6.py
+├── README.md
+├── CHANGELOG.md
+└── snapshots/
+```
+
+Puedes guardar los outputs en una carpeta separada si quieres mantener el proyecto más ordenado.
+
+---
