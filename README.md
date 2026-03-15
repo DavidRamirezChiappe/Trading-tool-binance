@@ -316,6 +316,7 @@ Sirve para comparar candidatos, pero la decisión final debe revisar también:
 project/
 ├── binance_trading_v3_6.py
 ├── README.md
+├── .env
 ├── CHANGELOG.md
 └── snapshots/
 ```
