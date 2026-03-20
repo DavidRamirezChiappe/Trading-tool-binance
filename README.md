@@ -7,6 +7,8 @@ Herramienta de análisis técnico para pares de Binance orientada a dos flujos d
 
 El objetivo del script es servir como **herramienta de screening y apoyo de decisión**, no como sistema automático de ejecución.
 
+La versión `v3_7` añade una mejora visual en consola para mostrar progreso general y avance por moneda mientras el análisis está corriendo.
+
 ## Autor
 **David Ramirez Chiappe** 
 
@@ -65,7 +67,10 @@ sobre capturas.
   - `watchlist_summary.json`
   - `watchlist_summary.txt`
   - `<SIMBOLO>_summary.json`
-
+- En `v3_7`, muestra además progreso visual en consola:
+  - barra global de avance
+  - símbolo actual en análisis
+  - estados de proceso por etapa
 ---
 
 ## Qué no hace
@@ -82,8 +87,20 @@ sobre capturas.
 - Python 3.10 o superior
 - Dependencias instaladas del proyecto
 - Archivo de claves API de Binance con permisos de lectura de mercado
-
 ---
+
+## Progreso visual en `v3_7`
+
+Cuando se analiza una lista amplia de monedas, el script ahora puede mostrar en consola:
+
+* barra global de progreso
+* moneda actual en análisis
+* mensajes breves por etapa del proceso
+* confirmación de avance para evitar la sensación de que el script está detenido
+
+Esta mejora es estética y de experiencia de uso. No cambia la lógica técnica del análisis.
+---
+
 # Archivo `.env`
 
 ## Para qué sirve
@@ -152,7 +169,7 @@ Resumen comparativo de varias monedas.
 
 ## Campos más útiles en versiones recientes
 
-En `v3_5` y `v3_6` aparecen, según el modo:
+En `v3_6` y `v3_7` aparecen, según el modo:
 
 * `setup_status`
 * `trend_quality`
@@ -204,32 +221,34 @@ Cuando:
 
 ---
 
-# Ejemplos de uso de `binance_trading_v3_6.py`
+# Ejemplos de uso de `binance_trading_v3_7.py`
+
+> Nota: `v3_7` mantiene la misma lógica operativa que `v3_6`; el cambio añadido es visual y muestra progreso en consola durante la ejecución.
 
 ## A. Analizar una sola moneda ya comprada (`posicion`)
 
 ### Con datos privados y entrada manual
 
 ```bash
-python binance_trading_v3_6.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3
+python binance_trading_v3_7.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3
 ```
 
 ### Con archivo `.env` en otra ruta
 
 ```bash
-python binance_trading_v3_6.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3 --archivo-env C:\mis_claves\binance.env
+python binance_trading_v3_7.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3 --archivo-env C:\mis_claves\binance.env
 ```
 
 ### Sin datos privados, solo con entrada manual
 
 ```bash
-python binance_trading_v3_6.py posicion --par ETHUSDT --precio 2028 --inversion 31.75
+python binance_trading_v3_7.py posicion --par ETHUSDT --precio 2028 --inversion 31.75
 ```
 
 ### Con más velas
 
 ```bash
-python binance_trading_v3_6.py posicion --par ETHUSDT --privados --precio 2028 --inversion 31.75 --velas 200
+python binance_trading_v3_7.py posicion --par ETHUSDT --privados --precio 2028 --inversion 31.75 --velas 200
 ```
 
 ---
@@ -239,25 +258,25 @@ python binance_trading_v3_6.py posicion --par ETHUSDT --privados --precio 2028 -
 ### Watchlist básica
 
 ```bash
-python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
+python binance_trading_v3_7.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
 ```
 
 ### Watchlist con capital de referencia personalizado
 
 ```bash
-python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2
+python binance_trading_v3_7.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2
 ```
 
 ### Watchlist con más velas
 
 ```bash
-python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2 --velas 200
+python binance_trading_v3_7.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT --capital 31.2 --velas 200
 ```
 
 ### Watchlist con todos los pares que quieras analizar
 
 ```bash
-python binance_trading_v3_6.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT ROBOUSDT
+python binance_trading_v3_7.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT ROBOUSDT
 ```
 
 ---
@@ -314,7 +333,7 @@ Sirve para comparar candidatos, pero la decisión final debe revisar también:
 
 ```bash
 project/
-├── binance_trading_v3_6.py
+├── binance_trading_v3_7.py
 ├── README.md
 ├── .env
 ├── CHANGELOG.md
