@@ -7,7 +7,25 @@ Las versiones listadas resumen los cambios funcionales más importantes del proy
 
 ---
 
-## [3.6] - Estado actual recomendado
+## [3.7] - Mejora visual de ejecución y Estado actual recomendado
+
+### Añadido
+* indicador visual de progreso en consola durante el análisis
+* barra de avance global por cantidad de monedas procesadas
+* línea informativa por símbolo en progreso, por ejemplo `Analizando TRXUSDT (3/10)`
+* estados visibles por etapa para reforzar confianza del usuario durante la ejecución
+
+### Cambiado
+* experiencia de uso en consola más clara mientras el script trabaja en modo `mercado`
+* mejora estética sin modificar la lógica de datos, ranking, zonas de entrada ni valoración técnica
+
+### Objetivo
+* mostrar al usuario que el script sigue trabajando y en qué parte del proceso se encuentra
+* mejorar la confianza operativa cuando se analizan muchas monedas y el proceso tarda varios minutos
+
+---
+
+## [3.6] 
 
 ### Añadido
 * separación entre resistencia **micro** y resistencia **operativa**
