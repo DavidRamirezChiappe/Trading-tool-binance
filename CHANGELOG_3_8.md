@@ -6,7 +6,43 @@ Este archivo sigue un formato simple, cronológico y orientado a uso práctico.
 Las versiones listadas resumen los cambios funcionales más importantes del proyecto.
 
 ---
+## [3.9] - Ranking más preciso y operabilidad mejorada
 
+### Añadido
+* **Nuevo sistema de puntuación (`score_final`)** que combina:
+  * Score base con multiplicador por calidad del setup (`vigente` = 1.0, `degradado` = 0.7, `invalido` = 0.5)
+  * Penalización más fuerte para estados `degradado` (-3 en execution, -2 en structure_4h)
+  * Penalización más fuerte para estados `invalido` (-5 en execution, -3 en structure_4h)
+* **Incorporación de `pullback_quality` en el score:**
+  * `ordenado`: +3 puntos
+  * `profundo_pero_sano`: +2 puntos
+  * `debil_sin_confirmacion`: -2 puntos
+  * `brusco`: -3 puntos
+  * `shallow_not_ready`: -1 punto
+* **Incorporación de `rr_estructural_preliminar` en el score:**
+  * `rr >= 2.0`: +3 puntos
+  * `rr >= 1.5`: +2 puntos
+  * `rr >= 1.0`: +1 punto
+  * `rr < 0.3`: -3 puntos
+  * `rr < 0.5`: -2 puntos
+  * `rr < 0.8`: -1 punto
+* **Nuevo flag `--only-vigent`** para filtrar ranking y mostrar solo activos con setup "vigente"
+* **Campo `score_raw`** en el JSON para referencia del score original sin multiplicador
+
+### Cambiado
+* El ranking ahora prioriza correctamente activos con `setup_status: vigente` sobre aquellos con buen score pero estado degradado
+* `score_bucket` ahora se calcula sobre `score_final`
+* Mejora en la legibilidad de las razones del ranking (se explicitan penalizaciones y bonificaciones)
+
+### Objetivo
+* Resolver el sesgo identificado donde activos como TAO (#1) con estado `degradado` y mal R:R aparecían por encima de activos más operables
+* Acercar el script a un sistema de trading más autónomo, reduciendo la necesidad de filtro humano
+
+### Ejemplo de uso con filtro vigente
+```bash
+python binance_trading_v3_9.py mercado --pares ETHUSDT SOLUSDT SUIUSDT --only-vigent
+
+---
 ## [3.8] - Mejoras de usabilidad y robustez
 
 ### Añadido
