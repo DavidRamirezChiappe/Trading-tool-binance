@@ -41,7 +41,7 @@ Las versiones listadas resumen los cambios funcionales más importantes del proy
 ### Ejemplo de uso con filtro vigente
 ```bash
 python binance_trading_v3_9.py mercado --pares ETHUSDT SOLUSDT SUIUSDT --only-vigent
-
+```
 ---
 ## [3.8] - Mejoras de usabilidad y robustez
 
