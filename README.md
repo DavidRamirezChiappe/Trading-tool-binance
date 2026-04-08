@@ -104,13 +104,8 @@ En modo `posicion` también muestra la misma barra de progreso (consistencia vis
 
 ---
 
-# Archivo `.env`
+# Ejemplos de uso con filtro vigente
 
-## Para qué sirve
-
-Permite guardar las credenciales de Binance fuera del código.
-
-### Ejemplos de uso con filtro vigente
 ```bash
 py binance_trading_v3_9.py mercado --pares ETHUSDT SOLUSDT SUIUSDT --only-vigent
 ```
@@ -120,6 +115,12 @@ py binance_trading_v3_9.py mercado --pares BNBUSDT AVAXUSDT ETHUSDT SOLUSDT ADAU
 ```bash
 py binance_trading_v3_9.py posicion --par ETHUSDT --privados --precio 2123.60 --inversion 423.1
 ```
+
+# Archivo `.env`
+
+## Para qué sirve
+
+Permite guardar las credenciales de Binance fuera del código.
 
 ## Contenido esperado
 
