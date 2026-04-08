@@ -38,10 +38,17 @@ Las versiones listadas resumen los cambios funcionales más importantes del proy
 * Resolver el sesgo identificado donde activos como TAO (#1) con estado `degradado` y mal R:R aparecían por encima de activos más operables
 * Acercar el script a un sistema de trading más autónomo, reduciendo la necesidad de filtro humano
 
-### Ejemplo de uso con filtro vigente
+### Ejemplos de uso con filtro vigente
 ```bash
-python binance_trading_v3_9.py mercado --pares ETHUSDT SOLUSDT SUIUSDT --only-vigent
+py binance_trading_v3_9.py mercado --pares ETHUSDT SOLUSDT SUIUSDT --only-vigent
 ```
+```bash
+py binance_trading_v3_9.py mercado --pares BNBUSDT AVAXUSDT ETHUSDT SOLUSDT ADAUSDT --capital 433.4
+```
+```bash
+py binance_trading_v3_9.py posicion --par ETHUSDT --privados --precio 2123.60 --inversion 423.1
+```
+
 ---
 ## [3.8] - Mejoras de usabilidad y robustez
 
