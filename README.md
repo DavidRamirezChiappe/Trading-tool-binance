@@ -110,6 +110,17 @@ En modo `posicion` también muestra la misma barra de progreso (consistencia vis
 
 Permite guardar las credenciales de Binance fuera del código.
 
+### Ejemplos de uso con filtro vigente
+```bash
+py binance_trading_v3_9.py mercado --pares ETHUSDT SOLUSDT SUIUSDT --only-vigent
+```
+```bash
+py binance_trading_v3_9.py mercado --pares BNBUSDT AVAXUSDT ETHUSDT SOLUSDT ADAUSDT --capital 433.4
+```
+```bash
+py binance_trading_v3_9.py posicion --par ETHUSDT --privados --precio 2123.60 --inversion 423.1
+```
+
 ## Contenido esperado
 
 Crear un archivo llamado `.env` en la misma carpeta del script:
