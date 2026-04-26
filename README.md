@@ -9,18 +9,6 @@ El objetivo del script es servir como **herramienta de screening y apoyo de deci
 
 ---
 
-## 🆕 Versión actual
-
-**v4.1.3**
-
-### Cambios relevantes
-
-* nueva estructura de salidas en `Snapshots/`
-* separación entre análisis de mercado y posición
-* archivos principales con prefijo `"1_"` para prioridad visual
-
----
-
 ## Autor
 
 **David Ramirez Chiappe**
@@ -40,6 +28,18 @@ Consulta el archivo [`LICENSE`](./LICENSE) para el texto completo.
 Este software se proporciona **“tal cual”**, sin garantías de ningún tipo.
 Su uso es responsabilidad exclusiva del usuario. No constituye asesoría financiera,
 legal ni profesional.
+
+---
+
+## 🆕 Versión actual
+
+**v4.1.3**
+
+### Cambios relevantes
+
+* nueva estructura de salidas en `Snapshots/`
+* separación entre análisis de mercado y posición
+* archivos principales con prefijo `"1_"` para prioridad visual
 
 ---
 
