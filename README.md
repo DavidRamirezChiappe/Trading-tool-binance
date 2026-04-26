@@ -253,7 +253,10 @@ python binance_trading_v4_1_3.py posicion --par XRPUSDT --privados --precio 1.41
 
 ```bash
 python binance_trading_v4_1_3.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
+python binance_trading_v4_1_3.py mercado --pares SUIUSDT LINKUSDT ROBOUSDT --capital 44.1
 ```
+
+
 
 ---
 
