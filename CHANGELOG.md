@@ -6,6 +6,94 @@ Este archivo sigue un formato simple, cronológico y orientado a uso
 práctico. Las versiones listadas resumen los cambios funcionales más
 importantes del proyecto.
 
+
+------------------------------------------------------------------------
+
+## [4.2.0] - Evaluación táctica y enfoque económico realista
+
+### Añadido
+
+* nuevo sistema `entry_mode`:
+
+  * `conservative`
+  * `balanced`
+  * `aggressive`
+* nueva lógica de selección de entrada:
+
+  * la entrada ya no depende únicamente del nivel `base`
+  * ahora puede elegir un punto intermedio (`balanced`) entre agresiva y base
+* nuevo bloque `fill_probability`
+
+  * estima probabilidad de ejecución de la orden límite
+  * considera:
+
+    * distancia vs precio actual
+    * distancia ATR
+    * aceleración en `15m`
+    * cercanía al máximo reciente
+    * calidad del pullback
+* nuevo bloque `oco_viability`
+
+  * evalúa si la futura OCO tiene sentido económico
+  * calcula:
+
+    * reward_pct
+    * risk_pct
+    * rr
+    * stop_air_atr
+    * tp_reachability
+    * stop_air_quality
+* nuevo bloque `expected_value_score`
+
+  * combina:
+
+    * fill probability
+    * calidad OCO
+    * bonus por RR
+* nueva clasificación:
+
+  * monedas ejecutables reales
+  * vigilancia ampliada informativa
+* mejora del análisis táctico:
+
+  * el script ahora intenta evaluar no solo si la moneda puede retroceder,
+    sino si posteriormente la OCO tendrá sentido operativo
+
+### Cambiado
+
+* nueva estructura de outputs:
+
+  * `Snapshots/Mercado/mercado_TIMESTAMP/`
+  * `Snapshots/Posicion/posicion_SYMBOL_TIMESTAMP/`
+* separación real por ejecución individual
+* mejora de organización y trazabilidad
+* corrección del cálculo de resistencia operativa desde la entrada sugerida
+* mejora de coherencia entre:
+
+  * entrada
+  * stop
+  * TP
+  * reward/risk táctico
+
+### Objetivo
+
+* reducir el problema de órdenes límite demasiado conservadoras
+* mejorar equilibrio entre:
+
+  * probabilidad de fill
+  * calidad del setup
+  * viabilidad real de la OCO
+* acercar el sistema a una lógica de trading económicamente operable
+
+### Observaciones
+
+* la versión 4.2 prioriza setups con mejor esperanza táctica,
+  no únicamente estructuras técnicamente limpias
+* el sistema sigue siendo un motor de análisis y no un ejecutor automático
+* las métricas `expected_value_score` y `fill_probability`
+  deben interpretarse como ayudas de decisión, no garantías
+
+
 ------------------------------------------------------------------------
 
 ## \[4.1.3\] - Reorganización de salidas y prioridad visual
