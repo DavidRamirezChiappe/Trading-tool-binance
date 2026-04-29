@@ -173,17 +173,6 @@ sobre capturas.
   * `support_quality`
   * `zone_integrity`
 
-### Salidas generadas (v4.1.3)
-
-Ahora los outputs se organizan en:
-
-```bash
-Snapshots/
-├── Historial/
-├── Mercado/
-└── Posicion/
-```
-
 ### Modo mercado
 
 Se generan:
@@ -331,7 +320,7 @@ Cuando:
 
 ---
 
-# Ejemplos de uso (v4.1.3)
+# Ejemplos de uso (v4.2)
 
 ## A. Analizar una sola moneda (`posicion`)
 
@@ -345,8 +334,6 @@ python binance_trading_v4_1_3.py posicion --par XRPUSDT --privados --precio 1.41
 python binance_trading_v4_1_3.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
 python binance_trading_v4_1_3.py mercado --pares SUIUSDT LINKUSDT ROBOUSDT --capital 44.1
 ```
-
-
 
 ---
 
@@ -382,7 +369,8 @@ Sirve para comparar candidatos, pero la decisión final debe revisar también:
 
 ```bash
 project/
-├── binance_trading_v4_1_3.py
+├── binance_trading_v4_2.py
+├── .env
 ├── README.md
 ├── CHANGELOG.md
 └── Snapshots/
