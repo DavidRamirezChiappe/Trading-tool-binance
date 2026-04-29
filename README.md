@@ -325,14 +325,14 @@ Cuando:
 ## A. Analizar una sola moneda (`posicion`)
 
 ```bash
-python binance_trading_v4_1_3.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3
+python binance_trading_v4_2.py posicion --par XRPUSDT --privados --precio 1.4120 --inversion 32.3
 ```
 
 ## B. Analizar varias monedas (`mercado`)
 
 ```bash
-python binance_trading_v4_1_3.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
-python binance_trading_v4_1_3.py mercado --pares SUIUSDT LINKUSDT ROBOUSDT --capital 44.1
+python binance_trading_v4_2.py mercado --pares ETHUSDT SOLUSDT ADAUSDT XRPUSDT POLUSDT
+python binance_trading_v4_2.py mercado --pares SUIUSDT LINKUSDT ROBOUSDT --capital 44.1
 ```
 
 ---
