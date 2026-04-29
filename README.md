@@ -93,7 +93,7 @@ Combina:
 
 ---
 
-## Nueva estructura de outputs (v4.2)
+### Nueva estructura de outputs (v4.2)
 
 Cada ejecución ahora genera su propia subcarpeta:
 
@@ -115,7 +115,7 @@ Esto mejora:
 
 ---
 
-## Filosofía operativa actual
+### Filosofía operativa actual
 
 La lógica del sistema ya no intenta únicamente encontrar “compras baratas”.
 
