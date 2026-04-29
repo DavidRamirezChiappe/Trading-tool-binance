@@ -31,17 +31,107 @@ legal ni profesional.
 
 ---
 
-## 🆕 Versión actual
+### Nuevas capacidades en v4.2.0
 
-**v4.1.3**
+La versión 4.2 introduce una capa táctica adicional orientada a mejorar la operabilidad real de las órdenes límite y las futuras OCO.
 
-### Cambios relevantes
+#### `entry_mode`
 
-* nueva estructura de salidas en `Snapshots/`
-* separación entre análisis de mercado y posición
-* archivos principales con prefijo `"1_"` para prioridad visual
+El sistema ahora puede seleccionar entradas mediante distintos modos:
+
+* `conservative`
+* `balanced`
+* `aggressive`
+
+Esto permite equilibrar:
+
+* calidad técnica
+* probabilidad de ejecución
+* reward/risk posterior
 
 ---
+
+#### `fill_probability`
+
+Nueva métrica que estima la probabilidad de que la orden límite llegue a ejecutarse.
+
+Considera:
+
+* distancia al precio actual
+* distancia en ATR
+* aceleración del timeframe `15m`
+* cercanía a máximos recientes
+* calidad del pullback
+
+---
+
+#### `oco_viability`
+
+Evalúa si una futura OCO tiene sentido económico antes de recomendar la compra.
+
+Incluye:
+
+* TP táctico
+* stop táctico
+* reward %
+* risk %
+* RR táctico
+* aire técnico del stop (`stop_air_atr`)
+* alcanzabilidad del TP (`tp_reachability`)
+
+---
+
+#### `expected_value_score`
+
+Nueva métrica compuesta que intenta priorizar oportunidades más operables en trading real.
+
+Combina:
+
+* probabilidad de fill
+* calidad de la OCO
+* relación reward/risk
+
+---
+
+## Nueva estructura de outputs (v4.2)
+
+Cada ejecución ahora genera su propia subcarpeta:
+
+```bash
+Snapshots/
+├── Historial/
+├── Mercado/
+│   └── mercado_TIMESTAMP/
+└── Posicion/
+    └── posicion_SYMBOL_TIMESTAMP/
+```
+
+Esto mejora:
+
+* trazabilidad
+* auditoría
+* comparación entre ejecuciones
+* organización histórica
+
+---
+
+## Filosofía operativa actual
+
+La lógica del sistema ya no intenta únicamente encontrar “compras baratas”.
+
+Ahora intenta responder:
+
+> “Si compro aquí, ¿la futura OCO tendrá sentido económico real?”
+
+Por eso el ranking actual considera:
+
+* probabilidad de ejecución
+* calidad del soporte
+* espacio hasta resistencia
+* aire técnico del stop
+* alcanzabilidad del TP
+* reward/risk táctico
+
 
 ## Objetivo general
 
