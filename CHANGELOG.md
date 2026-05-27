@@ -9,8 +9,6 @@ importantes del proyecto.
 
 ------------------------------------------------------------------------
 
-------------------------------------------------------------------------
-
 ## [4.2.2] - Clasificación operativa, control de riesgo y modo defensivo
 
 ### Añadido
