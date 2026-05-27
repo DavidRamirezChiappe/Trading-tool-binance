@@ -9,6 +9,150 @@ importantes del proyecto.
 
 ------------------------------------------------------------------------
 
+------------------------------------------------------------------------
+
+## [4.2.2] - Clasificación operativa, control de riesgo y modo defensivo
+
+### Añadido
+
+* nueva clasificación operativa `trade_mode`:
+
+  * `SWING_OCO`
+  * `SCALP_FAST_DIAGNOSTIC`
+  * `WATCHLIST`
+  * `NO_TRADE`
+
+* nuevo enfoque de separación entre:
+
+  * oportunidad técnica
+  * oportunidad operable
+  * oportunidad solo informativa
+  * oportunidad descartada
+
+* nuevo `market_regime_filter`:
+
+  * clasifica el contexto de mercado según proporción de activos visibles
+  * activa modo `risk_off` cuando el universo analizado está débil
+  * endurece los requisitos de compra en mercado deteriorado
+
+* nuevo `trade_journal` simple:
+
+  * crea o utiliza `Snapshots/Historial/trade_journal.json`
+  * permite registrar resultados reales de operaciones
+  * prepara la base para cooldown por símbolo y validación futura
+
+* nuevo sistema de `cooldown` por símbolo:
+
+  * permite penalizar símbolos con stop loss reciente
+  * permite penalizar símbolos con órdenes no ejecutadas recientes
+  * evita reentradas inmediatas sin cambio real de setup
+
+* nuevo diagnóstico `SCALP_FAST_DIAGNOSTIC`:
+
+  * identifica posibles oportunidades de micro-trading
+  * no genera recomendación automática de compra
+  * queda como señal informativa para revisión manual
+
+### Cambiado
+
+* se endurece la lógica para considerar una oportunidad como `SWING_OCO`
+* se eleva el estándar mínimo de aire del stop para swing:
+
+  * mínimo recomendado: `stop_air_atr >= 1.5`
+
+* se eleva el estándar mínimo de reward/risk para swing:
+
+  * mínimo recomendado: `rr >= 1.8`
+
+* se evita clasificar como swing setups con:
+
+  * `fill_score` bajo
+  * entrada excesivamente profunda en ATR
+  * `score_bucket` débil
+  * `setup_status` degradado o inválido
+  * stop con poco aire real
+
+* se recalibra la lectura de `stop_air_quality`:
+
+  * `sin_aire`
+  * `ajustado`
+  * `minimo_aceptable`
+  * `suficiente`
+  * `amplio`
+  * `demasiado_profundo`
+
+* en modo `risk_off`, las compras swing requieren condiciones más estrictas:
+
+  * calidad alta
+  * mejor score
+  * mejor R:R
+  * mejor aire de stop
+  * entrada no demasiado lejana
+
+### Objetivo
+
+* reducir señales “buenas en papel” pero débiles en ejecución real
+* evitar operaciones con stops demasiado ajustados
+* evitar compras en mercados deteriorados salvo setups excepcionalmente claros
+* diferenciar entre swing, scalp diagnóstico, vigilancia y no trade
+* preparar el sistema para medir resultados reales por operación
+
+### Observaciones
+
+* `SCALP_FAST_DIAGNOSTIC` no debe interpretarse como orden automática
+* el script sigue siendo una herramienta de análisis, no un bot de ejecución
+* la versión prioriza control de riesgo y clasificación operativa sobre frecuencia de trading
+* la validación estadística futura dependerá del uso disciplinado del `trade_journal`
+
+------------------------------------------------------------------------
+
+## [4.2.1] - Histórico enriquecido y reorganización estable de salidas
+
+### Añadido
+
+* lectura y escritura del histórico enriquecido de rankings
+* consolidación de métricas por corrida en `rankings_history.json`
+* incorporación de contexto histórico dentro del análisis de mercado
+* mayor trazabilidad de señales recurrentes por símbolo
+* resumen de conservadurismo histórico:
+
+  * distancia media de entrada
+  * entradas profundas
+  * símbolos recurrentes
+  * símbolos ejecutables recurrentes
+
+### Cambiado
+
+* se mantiene la estructura de carpetas introducida en versiones anteriores:
+
+  * `Snapshots/Historial/`
+  * `Snapshots/Mercado/`
+  * `Snapshots/Posicion/`
+
+* se estandariza el uso de 200 velas por defecto
+* el parámetro `--velas` queda como override opcional
+* el modo `mercado` mantiene `--capital` como dato variable por ejecución
+* el modo `posicion` mantiene parámetros operativos necesarios:
+
+  * `--par`
+  * `--privados`
+  * `--precio`
+  * `--inversion`
+
+### Objetivo
+
+* hacer más estable la operación diaria del script
+* reducir parámetros repetitivos
+* permitir que el análisis incorpore el histórico sin pedir rutas manuales
+* facilitar comparaciones entre corridas sucesivas
+
+### Observaciones
+
+* esta versión mejoró trazabilidad, pero todavía no registraba de forma completa el resultado real de cada operación
+* el histórico enriquecido fue útil para detectar problemas de conservadurismo, stops ajustados y señales recurrentes
+* la experiencia operativa posterior motivó la creación de la versión 4.2.2
+
+
 ## [4.2.0] - Evaluación táctica y enfoque económico realista
 
 ### Añadido
