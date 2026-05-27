@@ -104,3 +104,271 @@ Contenido esperado:
 ```env
 BINANCE_API_KEY=TU_API_KEY
 BINANCE_API_SECRET=TU_API_SECRET
+```
+
+Ventajas:
+
+* evita pegar claves en cada ejecución
+* mantiene las claves fuera del código
+* permite que el script las lea automáticamente
+
+No compartas tu archivo `.env`.
+
+---
+
+## Modos de uso
+
+El script tiene dos modos principales:
+
+```bash
+mercado
+posicion
+```
+
+---
+
+## Modo mercado
+
+Usa `mercado` cuando estás en USDT y quieres decidir entre varias monedas.
+
+Ejemplo:
+
+```bash
+python binance_trading_v4_2_2.py mercado --pares SUIUSDT LINKUSDT TRXUSDT BNBUSDT AVAXUSDT ETHUSDT SOLUSDT XRPUSDT POLUSDT TAOUSDT LTCUSDT DOGEUSDT SHIBUSDT ROBOUSDT CFGUSDT --capital 42
+```
+
+También puedes analizar menos pares:
+
+```bash
+python binance_trading_v4_2_2.py mercado --pares ETHUSDT SOLUSDT XRPUSDT POLUSDT --capital 42
+```
+
+### Velas por defecto
+
+El estándar operativo es usar 200 velas.
+
+No necesitas indicar `--velas` si quieres usar el valor estándar.
+
+Ejemplo con valor por defecto:
+
+```bash
+python binance_trading_v4_2_2.py mercado --pares ETHUSDT SOLUSDT XRPUSDT --capital 42
+```
+
+Ejemplo modificando la cantidad de velas:
+
+```bash
+python binance_trading_v4_2_2.py mercado --pares ETHUSDT SOLUSDT XRPUSDT --capital 42 --velas 300
+```
+
+---
+
+## Modo posición
+
+Usa `posicion` cuando ya compraste una moneda y quieres revisar la operación.
+
+Ejemplo con datos privados:
+
+```bash
+python binance_trading_v4_2_2.py posicion --par POLUSDT --privados --precio 0.0918 --inversion 42
+```
+
+Ejemplo sin datos privados:
+
+```bash
+python binance_trading_v4_2_2.py posicion --par POLUSDT --precio 0.0918 --inversion 42
+```
+
+Parámetros habituales:
+
+* `--par`: símbolo a analizar
+* `--privados`: usa datos privados de Binance
+* `--precio`: precio de entrada
+* `--inversion`: inversión aproximada en USDT
+
+---
+
+## Estructura de salidas
+
+El script genera archivos dentro de `Snapshots/`.
+
+Estructura general:
+
+```bash
+Snapshots/
+├── Historial/
+├── Mercado/
+│   └── mercado_TIMESTAMP/
+└── Posicion/
+    └── posicion_SYMBOL_TIMESTAMP/
+```
+
+---
+
+## Archivos principales
+
+En modo mercado:
+
+```bash
+1_Watchlist_YYYYMMDD_HHMMSS.json
+1_Watchlist_YYYYMMDD_HHMMSS.txt
+```
+
+En modo posición:
+
+```bash
+1_SYMBOL_summary.json
+1_SYMBOL_summary.txt
+```
+
+Además, pueden generarse archivos auxiliares:
+
+```bash
+klines_15m.csv
+klines_1h.csv
+klines_4h.csv
+summary.json
+analysis_summary.txt
+ranking_features_*.jsonl
+rankings_history.json
+trade_journal.json
+```
+
+---
+
+## Historial
+
+El script mantiene un historial en:
+
+```bash
+Snapshots/Historial/
+```
+
+Archivos relevantes:
+
+```bash
+rankings_history.json
+trade_journal.json
+```
+
+`rankings_history.json` guarda información de rankings y señales por corrida.
+
+`trade_journal.json` permite registrar resultados reales de operaciones, como:
+
+* orden no ejecutada
+* take profit
+* stop loss
+* cancelación
+* símbolo
+* entrada
+* TP
+* stop
+* resultado
+* duración
+
+El objetivo del journal es mejorar la evaluación futura del sistema usando resultados reales, no solo señales teóricas.
+
+---
+
+## Campos útiles del análisis
+
+Algunos campos relevantes que pueden aparecer en los outputs:
+
+```text
+setup_status
+trend_quality
+context_bias
+entry_mode
+fill_probability
+fill_score
+fill_atr_distance_1h
+oco_viability
+oco_rr
+reward_pct
+risk_pct
+stop_air_atr
+stop_air_quality
+expected_value_score
+trade_mode
+market_regime
+diagnostic_flags
+```
+
+Estos campos ayudan a interpretar si una oportunidad es técnica, operable, de vigilancia o descartable.
+
+---
+
+## Interpretación general
+
+El ranking no debe leerse como una orden automática.
+
+Antes de operar, conviene revisar:
+
+* estructura en `4h`
+* calidad del pullback en `1h`
+* timing en `15m`
+* distancia de la entrada al precio actual
+* distancia en ATR
+* R:R táctico
+* aire real del stop
+* alcanzabilidad del TP
+* spread
+* liquidez
+* contexto general del mercado
+
+---
+
+## Modos operativos internos
+
+El script puede clasificar oportunidades en modos como:
+
+```text
+SWING_OCO
+SCALP_FAST_DIAGNOSTIC
+WATCHLIST
+NO_TRADE
+```
+
+Significado general:
+
+* `SWING_OCO`: oportunidad apta para análisis de compra límite con posible OCO.
+* `SCALP_FAST_DIAGNOSTIC`: posible oportunidad rápida, solo informativa.
+* `WATCHLIST`: activo interesante, pero no listo para operar.
+* `NO_TRADE`: activo descartado por filtros o contexto.
+
+`SCALP_FAST_DIAGNOSTIC` no debe interpretarse como recomendación automática de compra.
+
+---
+
+## Buenas prácticas
+
+* Ejecuta el análisis con datos recientes.
+* Usa el modo mercado como filtro inicial.
+* Revisa el resumen individual antes de operar.
+* No uses el ranking como piloto automático.
+* Revisa siempre el R:R realista después de ajustar el stop.
+* Evita operar si el mercado general está débil y no hay setups claros.
+* Registra los resultados reales en el trade journal.
+* Revisa el CHANGELOG para entender los cambios de cada versión.
+
+---
+
+## Estructura recomendada del proyecto
+
+```bash
+project/
+├── binance_trading_v4_2_2.py
+├── .env
+├── README.md
+├── CHANGELOG.md
+├── LICENSE
+└── Snapshots/
+```
+
+---
+
+## Historial de versiones
+
+Los detalles de cada versión se documentan en `CHANGELOG.md`.
+
+El README se mantiene como guía de uso general del script.
