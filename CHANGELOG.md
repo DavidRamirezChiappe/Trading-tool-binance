@@ -9,6 +9,166 @@ importantes del proyecto.
 
 ------------------------------------------------------------------------
 
+## [4.2.5] - Shadow tracking refinado y control de crecimiento histórico
+
+### Añadido
+
+* clasificación de señales sombra mediante `shadow_type`:
+
+  * `full_hypothetical_trade`
+  * `rebound_only`
+  * `invalid_noise`
+
+* nuevo control de creación de señales sombra para evitar exceso de ruido histórico
+* nuevo límite de señales sombra nuevas por corrida
+* deduplicación de señales sombra por símbolo, tipo y zona de entrada
+* nuevos eventos append-only en `shadow_journal.jsonl`:
+
+  * `shadow_signal_created`
+  * `shadow_entry_touched`
+  * `shadow_rebound_detected`
+  * `shadow_signal_resolved`
+  * `shadow_duplicate_skipped`
+
+* resolución automática de señales sombra vencidas
+* nueva métrica diagnóstica `missed_rebound_score`
+* resumen ampliado de shadow tracking en el TXT de mercado:
+
+  * señales activas antes
+  * señales creadas
+  * señales resueltas
+  * señales activas después
+  * duplicadas omitidas
+  * entradas sombra tocadas
+  * rebotes detectados
+  * TP hipotéticos
+  * stops hipotéticos
+  * señales destacadas
+
+### Cambiado
+
+* el shadow tracking deja de crear una señal para todos los símbolos por defecto
+* ahora una señal sombra solo se crea si existe una hipótesis mínimamente razonable:
+
+  * `hypothetical_entry`
+  * `hypothetical_tp`
+  * y al menos una condición de interés operativo o estadístico
+
+* las señales sin stop táctico válido ya no se interpretan como operación completa
+* las señales sin stop válido se clasifican como `rebound_only`
+* se reduce el crecimiento innecesario de `active_shadow_signals.json`
+* se mejora la utilidad de `shadow_journal.jsonl` para minería posterior
+
+### Corregido
+
+* mensaje final del CLI actualizado para mostrar correctamente `v4.2.5`
+* se corrige salida textual que todavía mostraba `v4.2.4` aunque los archivos internos ya estaban siendo generados como `4.2.5`
+
+### Objetivo
+
+* medir mejor las oportunidades descartadas por el algoritmo
+* diferenciar entre operación completa y rebote hipotético
+* evitar que el histórico crezca con señales de baja utilidad
+* preparar la data para evaluar si el sistema está siendo prudente o demasiado conservador
+* mantener intactos los filtros principales de compra real
+
+### Observaciones
+
+* `SWING_OCO` no cambia en esta versión
+* `SCALP_FAST` sigue siendo solo diagnóstico
+* no se modifica el filtro `risk_off`
+* no se modifica el mínimo de stop de 1.5 ATR
+* no se modifica el R:R mínimo de 1.8
+* esta versión no convierte rebotes detectados en recomendaciones automáticas
+* el objetivo principal es medición, limpieza y control del crecimiento histórico
+
+------------------------------------------------------------------------
+
+## [4.2.4] - Shadow tracking y reorganización del historial
+
+### Añadido
+
+* nuevo sistema de shadow tracking para medir oportunidades descartadas
+* creación de `active_shadow_signals.json`
+* creación de `shadow_journal.jsonl`
+* seguimiento de señales no operadas durante una ventana temporal definida
+* medición de entradas hipotéticas tocadas
+* medición de excursión favorable máxima aproximada
+* medición de excursión adversa máxima aproximada
+* nueva estructura de carpetas para historial:
+
+  * `Snapshots/Historial/`
+  * `Snapshots/Historial/Detalle/`
+  * `Snapshots/Historial/Backups/`
+  * `Snapshots/Historial/Archivo/`
+
+### Cambiado
+
+* `rankings_history.json` empieza a guardar un resumen más liviano desde nuevas corridas
+* los archivos técnicos detallados se mueven a `Snapshots/Historial/Detalle/`
+* los snapshots completos de ranking quedan separados del historial principal
+* se mantiene compatibilidad con entradas anteriores del histórico
+
+### Objetivo
+
+* medir el coste de oportunidad de no operar
+* detectar si señales descartadas habrían tocado entrada y rebotado
+* evitar que el histórico principal se vuelva demasiado pesado
+* ordenar visualmente los archivos para facilitar revisión humana
+* preparar el sistema para futura minería de datos sin introducir todavía una base de datos
+
+### Observaciones
+
+* esta versión no cambia filtros de compra real
+* no introduce SQLite ni otra base de datos
+* el shadow tracking es diagnóstico, no una recomendación automática de trading
+* en la primera implementación podía crear demasiadas señales sombra, lo que motivó la versión 4.2.5
+
+------------------------------------------------------------------------
+
+## [4.2.3] - Journal operativo con eventos reales y trazabilidad de mercado
+
+### Añadido
+
+* mejora de `trade_journal.json`
+* registro de eventos operativos desde modo mercado
+* registro de `market_scan`
+* registro de `signal_generated`
+* registro de `watchlist_signal`
+* preparación para registrar eventos desde modo posición
+* lectura de datos privados en modo solo lectura cuando se usa `--privados`
+* soporte para registrar eventos relacionados con:
+
+  * posición abierta
+  * OCO detectada
+  * OCO faltante
+  * órdenes abiertas
+  * órdenes históricas recientes
+  * trades recientes
+  * posibles TP
+  * posibles SL
+  * salidas manuales
+
+### Cambiado
+
+* el journal deja de ser únicamente un archivo manual
+* el modo mercado empieza a dejar trazabilidad operativa
+* el cooldown queda preparado para usar eventos reales del journal
+* se mantiene intacta la lógica de filtros de trading heredada de v4.2.2
+
+### Objetivo
+
+* construir memoria operativa real
+* separar análisis técnico de resultado operativo
+* alimentar futuras reglas de cooldown con eventos reales
+* registrar no solo lo que el script recomienda, sino también lo que ocurre alrededor de señales, posiciones y OCO
+
+### Observaciones
+
+* esta versión no cambia entradas, stops ni reglas de compra real
+* `trade_journal.json` empieza a ser útil después de varias corridas
+* el modo mercado fue validado primero; el modo posición queda sujeto a pruebas con posición u órdenes reales recientes
+
 ## [4.2.2] - Clasificación operativa, control de riesgo y modo defensivo
 
 ### Añadido
