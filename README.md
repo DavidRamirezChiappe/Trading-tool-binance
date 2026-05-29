@@ -134,13 +134,13 @@ Usa `mercado` cuando estás en USDT y quieres decidir entre varias monedas.
 Ejemplo:
 
 ```bash
-python binance_trading_v4_2_2.py mercado --pares SUIUSDT LINKUSDT TRXUSDT BNBUSDT AVAXUSDT ETHUSDT SOLUSDT XRPUSDT POLUSDT TAOUSDT LTCUSDT DOGEUSDT SHIBUSDT ROBOUSDT CFGUSDT --capital 42
+python binance_trading_vXXX.py mercado --pares SUIUSDT LINKUSDT TRXUSDT BNBUSDT AVAXUSDT ETHUSDT SOLUSDT XRPUSDT POLUSDT TAOUSDT LTCUSDT DOGEUSDT SHIBUSDT ROBOUSDT CFGUSDT --capital 42
 ```
 
 También puedes analizar menos pares:
 
 ```bash
-python binance_trading_v4_2_2.py mercado --pares ETHUSDT SOLUSDT XRPUSDT POLUSDT --capital 42
+python binance_trading_vXXX.py mercado --pares ETHUSDT SOLUSDT XRPUSDT POLUSDT --capital 42
 ```
 
 ### Velas por defecto
@@ -152,13 +152,13 @@ No necesitas indicar `--velas` si quieres usar el valor estándar.
 Ejemplo con valor por defecto:
 
 ```bash
-python binance_trading_v4_2_2.py mercado --pares ETHUSDT SOLUSDT XRPUSDT --capital 42
+python binance_trading_vXXX.py mercado --pares ETHUSDT SOLUSDT XRPUSDT --capital 42
 ```
 
 Ejemplo modificando la cantidad de velas:
 
 ```bash
-python binance_trading_v4_2_2.py mercado --pares ETHUSDT SOLUSDT XRPUSDT --capital 42 --velas 300
+python binance_trading_vXXX.py mercado --pares ETHUSDT SOLUSDT XRPUSDT --capital 42 --velas 300
 ```
 
 ---
@@ -170,13 +170,13 @@ Usa `posicion` cuando ya compraste una moneda y quieres revisar la operación.
 Ejemplo con datos privados:
 
 ```bash
-python binance_trading_v4_2_2.py posicion --par POLUSDT --privados --precio 0.0918 --inversion 42
+python binance_trading_vXXX.py posicion --par POLUSDT --privados --precio 0.0918 --inversion 42
 ```
 
 Ejemplo sin datos privados:
 
 ```bash
-python binance_trading_v4_2_2.py posicion --par POLUSDT --precio 0.0918 --inversion 42
+python binance_trading_vXXX.py posicion --par POLUSDT --precio 0.0918 --inversion 42
 ```
 
 Parámetros habituales:
@@ -197,6 +197,15 @@ Estructura general:
 ```bash
 Snapshots/
 ├── Historial/
+│   ├── rankings_history.json
+│   ├── trade_journal.json
+│   ├── active_shadow_signals.json
+│   ├── shadow_journal.jsonl
+│   ├── Detalle/
+│   │   ├── ranking_YYYYMMDD_HHMMSS.json
+│   │   └── ranking_features_YYYYMMDD_HHMMSS.jsonl
+│   ├── Backups/
+│   └── Archivo/
 ├── Mercado/
 │   └── mercado_TIMESTAMP/
 └── Posicion/
@@ -247,8 +256,15 @@ Snapshots/Historial/
 Archivos relevantes:
 
 ```bash
+En historial:
+
+```bash
 rankings_history.json
 trade_journal.json
+active_shadow_signals.json
+shadow_journal.jsonl
+Detalle/ranking_YYYYMMDD_HHMMSS.json
+Detalle/ranking_features_YYYYMMDD_HHMMSS.jsonl
 ```
 
 `rankings_history.json` guarda información de rankings y señales por corrida.
